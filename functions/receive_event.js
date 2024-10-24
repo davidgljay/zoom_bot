@@ -15,8 +15,29 @@ Data formats for each event type are at the bottom of this file.
 
 exports.receiveEvent = functions.https.onRequest((req, res) => {
     console.log('Received data:', req.body);
+    const data = req.body;
+    const eventType = data.event;
+    if (eventType === 'participant.joined') {
+        handleParticipantJoined(data);
+    } else if (eventType === 'meeting.created' || eventType === 'meeting.updated') {
+        handleMeetingCreatedOrUpdated(data);
+    }
     res.status(200).send('Data received');
 });
+
+function handleParticipantJoined(data) {
+    const meetingId = data.payload.object.id;
+    const email = data.payload.object.participant.email;
+    console.log('Participant joined:', data);
+} 
+
+function handleMeetingCreatedOrUpdated(data) {
+    const meetingId = data.payload.object.id;
+    const meetingName = data.payload.object.topic;
+    const startTime = data.payload.object.start_time;
+    const link = data.payload.object.join_url;
+    console.log('Meeting created:', data);
+}
 
 /*
 
